@@ -57,7 +57,7 @@ variable "validation" {
     error_message = "validation.method must be one of route53, external."
   }
   validation {
-    condition     = var.validation.method != "route53" || var.validation.zone_id != null
+    condition     = var.validation.method != "route53" || try(length(var.validation.zone_id) > 0, false)
     error_message = "validation.zone_id must be set when validation.method is route53."
   }
 }

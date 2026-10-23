@@ -16,3 +16,17 @@ run "apply_minimal" {
     error_message = "validation records must be CNAME records in the terraform-cloudflare-dns shape."
   }
 }
+
+# Apex plus wildcard share a single DNS validation record.
+run "apply_apex_and_wildcard" {
+  command = apply
+
+  module {
+    source = "./examples/apex_wildcard"
+  }
+
+  assert {
+    condition     = length(output.validation_records) == 1
+    error_message = "example.com + *.example.com must emit exactly one validation record."
+  }
+}

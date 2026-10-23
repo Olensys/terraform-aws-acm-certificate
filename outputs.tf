@@ -14,15 +14,15 @@ output "arn" {
 }
 
 output "validation_records" {
-  description = "DNS validation records keyed by validated domain name, in the record shape consumed by terraform-cloudflare-dns (name, type, content, ttl, proxied, comment). Known only after apply. Null when create is false."
+  description = "DNS validation records keyed by record name (each distinct record appears once, even when it validates several domains such as an apex and its wildcard), in the record shape consumed by terraform-cloudflare-dns (name, type, content, ttl, proxied, comment). Known only after apply. Null when create is false."
   value = var.create ? {
-    for dvo in module.this.acm_certificate_domain_validation_options : dvo.domain_name => {
-      name    = trimsuffix(dvo.resource_record_name, ".")
-      type    = dvo.resource_record_type
-      content = trimsuffix(dvo.resource_record_value, ".")
+    for name, dvos in local.validation_options_by_record : name => {
+      name    = name
+      type    = dvos[0].resource_record_type
+      content = trimsuffix(dvos[0].resource_record_value, ".")
       ttl     = 300
       proxied = false
-      comment = "ACM validation for ${dvo.domain_name}"
+      comment = "ACM validation for ${join(", ", sort(dvos[*].domain_name))}"
     }
   } : null
 }

@@ -6,6 +6,12 @@ locals {
   # Wiring passed to the upstream module, exposed through outputs.
   route53_records_created = local.route53
   validation_waits        = local.route53 && var.validation.wait
+
+  # Group by record name: an apex and its wildcard share one DNS record.
+  validation_options_by_record = var.create ? {
+    for dvo in module.this.acm_certificate_domain_validation_options :
+    trimsuffix(dvo.resource_record_name, ".") => dvo...
+  } : {}
 }
 
 # Upstream applies create_before_destroy to the certificate itself.

@@ -2,12 +2,20 @@ mock_provider "aws" {
   mock_resource "aws_acm_certificate" {
     defaults = {
       arn = "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000000"
-      domain_validation_options = [{
-        domain_name           = "example.com"
-        resource_record_name  = "_abc.example.com."
-        resource_record_type  = "CNAME"
-        resource_record_value = "_def.acm-validations.aws."
-      }]
+      domain_validation_options = [
+        {
+          domain_name           = "example.com"
+          resource_record_name  = "_abc.example.com."
+          resource_record_type  = "CNAME"
+          resource_record_value = "_def.acm-validations.aws."
+        },
+        {
+          domain_name           = "*.example.com"
+          resource_record_name  = "_abc.example.com."
+          resource_record_type  = "CNAME"
+          resource_record_value = "_def.acm-validations.aws."
+        },
+      ]
     }
   }
 }
@@ -132,7 +140,7 @@ run "test_create_false_plans_nothing" {
   }
 }
 
-run "test_name_length_validation" {
+run "test_name_rejects_uppercase" {
   command = plan
 
   variables {
@@ -140,6 +148,47 @@ run "test_name_length_validation" {
   }
 
   expect_failures = [var.name]
+}
+
+run "test_name_length_validation" {
+  command = plan
+
+  variables {
+    name = join("", [for i in range(64) : "a"])
+  }
+
+  expect_failures = [var.name]
+}
+
+run "test_empty_zone_id_rejected_for_route53" {
+  command = plan
+
+  variables {
+    validation = { method = "route53", zone_id = "" }
+  }
+
+  expect_failures = [var.validation]
+}
+
+run "test_validation_records_deduplicated" {
+  # Applied against the mock provider: the output is unknown at plan time.
+  command = apply
+
+  variables {
+    domain_name               = "example.com"
+    subject_alternative_names = ["*.example.com"]
+    validation                = { method = "external" }
+  }
+
+  assert {
+    condition     = output.validation_records["_abc.example.com"].comment == "ACM validation for *.example.com, example.com"
+    error_message = "the shared record must list every domain it validates."
+  }
+
+  assert {
+    condition     = length(output.validation_records) == 1
+    error_message = "apex and wildcard sharing one record must yield a single validation record."
+  }
 }
 
 run "test_tags_contract" {
