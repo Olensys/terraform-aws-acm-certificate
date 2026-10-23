@@ -1,6 +1,6 @@
-# __NAME__
+# terraform-aws-acm-certificate
 
-__DESCRIPTION__
+ACM certificate with Route53 or external DNS validation, EC P-256 key, create-before-destroy
 
 ## Opinions
 
@@ -10,7 +10,7 @@ __DESCRIPTION__
 
 ```hcl
 module "this" {
-  source = "git::https://github.com/Olensys/__NAME__.git?ref=v1.0.0"
+  source = "git::https://github.com/Olensys/terraform-aws-acm-certificate.git?ref=v1.0.0"
 
   name = "example"
   context = {
