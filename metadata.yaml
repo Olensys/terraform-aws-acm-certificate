@@ -4,7 +4,7 @@ tier: capability          # primitive | capability | blueprint
 maturity: experimental    # experimental | stable | deprecated
 description: ACM certificate with Route53 or external DNS validation, EC P-256 key, create-before-destroy
 owners: [platform]
-upstream: null            # e.g. "terraform-aws-modules/s3-bucket/aws 5.17.0"
-pairs_with: null          # e.g. "terraform-google-gcs-bucket"
+upstream: "terraform-aws-modules/acm/aws 6.3.1"
+pairs_with: null
 registry_name: terraform-aws-acm-certificate
 deprecated: null          # { removal: YYYY-MM-DD, replacement: <repo> }
