@@ -15,20 +15,20 @@ ACM certificate with Route53 or external DNS validation, EC P-256 key, create-be
 ## Usage
 
 ```hcl
-module "this" {
-  source = "git::https://github.com/Olensys/terraform-aws-acm-certificate.git?ref=v1.0.0"
+module "naming" {
+  source  = "git::https://github.com/Olensys/terraform-null-naming.git?ref=v1.0.1"
+  context = var.context
+}
 
-  name = "example"
-  context = {
-    organization = "olensys"
-    environment  = "dev"
-    application  = "example"
-    owner        = "platform"
-    cost_center  = "eng"
-  }
+module "acm_certificate" {
+  source  = "git::https://github.com/Olensys/terraform-aws-acm-certificate.git?ref=v1.0.1"
+  name    = module.naming.name
+  context = var.context
 
   domain_name = "example.com"
   validation  = { method = "external" }
+
+  tags = module.naming.tags
 }
 ```
 
