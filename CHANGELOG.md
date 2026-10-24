@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/Olensys/terraform-aws-acm-certificate/compare/v1.0.1...v1.0.2) (2026-10-24)
+
+
+### Bug Fixes
+
+* run integration on change and weekly instead of nightly ([a588c89](https://github.com/Olensys/terraform-aws-acm-certificate/commit/a588c89029fa6845ea78df5941aeba9f8ae8e6ad))
+
 ## 1.0.1
 
 ### Fixes
