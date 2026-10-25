@@ -1,6 +1,6 @@
 output "id" {
   description = "Identifier of the certificate (its ARN). Null when create is false."
-  value       = var.create ? module.this.acm_certificate_arn : null
+  value       = var.create ? (local.external_waits ? aws_acm_certificate_validation.external[0].certificate_arn : module.this.acm_certificate_arn) : null
 }
 
 output "name" {
@@ -10,7 +10,7 @@ output "name" {
 
 output "arn" {
   description = "ARN of the ACM certificate. Null when create is false."
-  value       = var.create ? module.this.acm_certificate_arn : null
+  value       = var.create ? (local.external_waits ? aws_acm_certificate_validation.external[0].certificate_arn : module.this.acm_certificate_arn) : null
 }
 
 output "validation_records" {
@@ -33,7 +33,7 @@ output "route53_records_created" {
 }
 
 output "validation_waits" {
-  description = "Whether the module waits for the certificate to be issued. Null when create is false."
+  description = "Whether the module waits for the certificate to be issued (route53 with wait, or external with record FQDNs and wait). Null when create is false."
   value       = var.create ? local.validation_waits : null
 }
 

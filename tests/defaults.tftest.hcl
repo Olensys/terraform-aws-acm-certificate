@@ -135,6 +135,7 @@ run "test_create_false_plans_nothing" {
       output.route53_records_created == null,
       output.validation_waits == null,
       output.tags == null,
+      length(aws_acm_certificate_validation.external) == 0,
     ])
     error_message = "every output must be null when create is false."
   }
@@ -215,4 +216,50 @@ run "test_tags_contract" {
     condition     = output.tags.Team == "z"
     error_message = "context.extra_tags must be merged into tags."
   }
+}
+
+run "test_external_waits_when_fqdns_given" {
+  command = plan
+  variables {
+    validation = {
+      method                = "external"
+      external_record_fqdns = ["_abc.example.com"]
+    }
+  }
+  assert {
+    condition     = length(aws_acm_certificate_validation.external) == 1
+    error_message = "external method with record FQDNs must create the validation wait."
+  }
+  assert {
+    condition     = output.validation_waits == true
+    error_message = "validation_waits must report true when the external wait is active."
+  }
+}
+
+run "test_external_without_fqdns_does_not_wait" {
+  command = plan
+  variables { validation = { method = "external" } }
+  assert {
+    condition     = length(aws_acm_certificate_validation.external) == 0
+    error_message = "external method without record FQDNs must not create the validation wait."
+  }
+}
+
+run "test_external_wait_false_skips_wait" {
+  command = plan
+  variables {
+    validation = { method = "external", wait = false, external_record_fqdns = ["_abc.example.com"] }
+  }
+  assert {
+    condition     = length(aws_acm_certificate_validation.external) == 0
+    error_message = "wait = false must disable the external validation wait."
+  }
+}
+
+run "test_external_fqdns_rejected_for_route53" {
+  command = plan
+  variables {
+    validation = { method = "route53", zone_id = "Z123", external_record_fqdns = ["_abc.example.com"] }
+  }
+  expect_failures = [var.validation]
 }
