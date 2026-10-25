@@ -1,7 +1,7 @@
 name: terraform-aws-acm-certificate
 cloud: aws          # aws | google | common
 tier: capability          # primitive | capability | blueprint
-maturity: experimental    # experimental | stable | deprecated
+maturity: stable          # experimental | stable | deprecated
 description: ACM certificate with Route53 or external DNS validation, EC P-256 key, create-before-destroy
 owners: [platform]
 upstream: "terraform-aws-modules/acm/aws 6.3.1"
