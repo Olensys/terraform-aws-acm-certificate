@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Olensys/terraform-aws-acm-certificate/compare/v1.0.3...v1.1.0) (2026-10-25)
+
+
+### Features
+
+* wait for issuance with external DNS validation ([#4](https://github.com/Olensys/terraform-aws-acm-certificate/issues/4)) ([4e2d532](https://github.com/Olensys/terraform-aws-acm-certificate/commit/4e2d532a917890f772fbcc133fa122c6b30cea12))
+
 ## [1.0.3](https://github.com/Olensys/terraform-aws-acm-certificate/compare/v1.0.2...v1.0.3) (2026-10-24)
 
 
