@@ -22,7 +22,7 @@ run "apply_minimal" {
   }
 }
 
-# Apex plus wildcard share a single DNS validation record.
+# Apex plus wildcard share a single DNS validation record. Requires TF_VAR_zone_domain (defaults to the test subdomain); nothing waits for issuance.
 run "apply_apex_and_wildcard" {
   command = apply
 
@@ -32,6 +32,6 @@ run "apply_apex_and_wildcard" {
 
   assert {
     condition     = length(output.validation_records) == 1
-    error_message = "example.com + *.example.com must emit exactly one validation record."
+    error_message = "apex.<zone_domain> + *.apex.<zone_domain> must emit exactly one validation record."
   }
 }
