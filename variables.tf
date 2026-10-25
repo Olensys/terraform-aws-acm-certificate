@@ -46,7 +46,7 @@ variable "subject_alternative_names" {
 }
 
 variable "validation" {
-  description = "DNS validation settings. method is route53 (the module creates the records in zone_id and, when wait is true, waits for issuance) or external (the module emits validation_records for the consumer to create elsewhere; pass the created records' FQDNs back in external_record_fqdns to make the module wait for issuance)."
+  description = "DNS validation settings. method is route53 (the module creates the records in zone_id and, when wait is true, waits for issuance) or external (the module emits validation_records for the consumer to create elsewhere; pass the created records' FQDNs back in external_record_fqdns to make the module wait for issuance). An empty list still turns the wait on; pass null to skip it."
   type = object({
     method                = string
     zone_id               = optional(string)

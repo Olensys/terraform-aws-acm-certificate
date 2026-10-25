@@ -56,7 +56,7 @@ module "dns" {
 }
 ```
 
-`validation_records` feeds `terraform-cloudflare-dns`, and the created records' names (`fqdns`, a map of record key to record name) go back in as `external_record_fqdns`, so the module waits for issuance and `arn`/`id` only resolve once the certificate is issued.
+`validation_records` feeds `terraform-cloudflare-dns`, and the created records' names (`fqdns`, a map of record key to record name) go back in as `external_record_fqdns`, so the module waits for issuance and `arn`/`id` only resolve once the certificate is issued. On a first deploy apply the certificate alone first (`terraform apply -target=module.cert`), then apply everything; the validation record names are known only after the certificate exists.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -91,7 +91,7 @@ module "dns" {
 | <a name="input_context"></a> [context](#input\_context) | Deployment context used for naming, tagging and environment-dependent defaults. | <pre>object({<br/>    organization = string<br/>    environment  = string<br/>    application  = string<br/>    component    = optional(string)<br/>    owner        = string<br/>    cost_center  = string<br/>    extra_tags   = optional(map(string), {})<br/>  })</pre> | n/a | yes |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | Primary domain name of the certificate (for example example.com or *.example.com). This is the certificate's identity; var.name is used for tagging only. | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Resource name. Lowercase letters, digits and hyphens. | `string` | n/a | yes |
-| <a name="input_validation"></a> [validation](#input\_validation) | DNS validation settings. method is route53 (the module creates the records in zone\_id and, when wait is true, waits for issuance) or external (the module emits validation\_records for the consumer to create elsewhere; pass the created records' FQDNs back in external\_record\_fqdns to make the module wait for issuance). | <pre>object({<br/>    method                = string<br/>    zone_id               = optional(string)<br/>    wait                  = optional(bool, true)<br/>    external_record_fqdns = optional(list(string))<br/>  })</pre> | n/a | yes |
+| <a name="input_validation"></a> [validation](#input\_validation) | DNS validation settings. method is route53 (the module creates the records in zone\_id and, when wait is true, waits for issuance) or external (the module emits validation\_records for the consumer to create elsewhere; pass the created records' FQDNs back in external\_record\_fqdns to make the module wait for issuance). An empty list still turns the wait on; pass null to skip it. | <pre>object({<br/>    method                = string<br/>    zone_id               = optional(string)<br/>    wait                  = optional(bool, true)<br/>    external_record_fqdns = optional(list(string))<br/>  })</pre> | n/a | yes |
 | <a name="input_create"></a> [create](#input\_create) | Whether to create any resources. Set false to create nothing. | `bool` | `true` | no |
 | <a name="input_subject_alternative_names"></a> [subject\_alternative\_names](#input\_subject\_alternative\_names) | Additional domain names the certificate covers. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags merged onto every taggable resource, applied last. | `map(string)` | `{}` | no |
