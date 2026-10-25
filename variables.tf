@@ -46,11 +46,12 @@ variable "subject_alternative_names" {
 }
 
 variable "validation" {
-  description = "DNS validation settings. method is route53 (the module creates the records in zone_id and, when wait is true, waits for issuance) or external (the module only emits validation_records for the consumer to create elsewhere)."
+  description = "DNS validation settings. method is route53 (the module creates the records in zone_id and, when wait is true, waits for issuance) or external (the module emits validation_records for the consumer to create elsewhere; pass the created records' FQDNs back in external_record_fqdns to make the module wait for issuance)."
   type = object({
-    method  = string
-    zone_id = optional(string)
-    wait    = optional(bool, true)
+    method                = string
+    zone_id               = optional(string)
+    wait                  = optional(bool, true)
+    external_record_fqdns = optional(list(string))
   })
   validation {
     condition     = contains(["route53", "external"], var.validation.method)
@@ -59,6 +60,10 @@ variable "validation" {
   validation {
     condition     = var.validation.method != "route53" || try(length(var.validation.zone_id) > 0, false)
     error_message = "validation.zone_id must be set when validation.method is route53."
+  }
+  validation {
+    condition     = var.validation.method != "route53" || var.validation.external_record_fqdns == null
+    error_message = "external_record_fqdns is only used with method external."
   }
 }
 
