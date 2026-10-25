@@ -7,6 +7,10 @@
 
 * wait for issuance with external DNS validation ([#4](https://github.com/Olensys/terraform-aws-acm-certificate/issues/4)) ([4e2d532](https://github.com/Olensys/terraform-aws-acm-certificate/commit/4e2d532a917890f772fbcc133fa122c6b30cea12))
 
+### Behaviour changes
+
+With `validation.method = "external"`, passing `validation.external_record_fqdns` makes the module wait for issuance; `arn` and `id` then depend on that wait. Without it behaviour is unchanged.
+
 ## [1.0.3](https://github.com/Olensys/terraform-aws-acm-certificate/compare/v1.0.2...v1.0.3) (2026-10-24)
 
 
