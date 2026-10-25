@@ -12,6 +12,11 @@ run "apply_minimal" {
   }
 
   assert {
+    condition     = output.arn != null
+    error_message = "the certificate must be issued, so arn resolves from the validation wait."
+  }
+
+  assert {
     condition     = alltrue([for r in values(output.validation_records) : r.type == "CNAME" && r.ttl == 300 && r.proxied == false])
     error_message = "validation records must be CNAME records in the terraform-cloudflare-dns shape."
   }

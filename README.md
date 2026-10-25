@@ -40,23 +40,26 @@ module "cert" {
   name    = module.naming.name
   context = var.context
 
-  domain_name = "example.com"
+  domain_name = "acm.example.com"
   validation = {
     method                = "external"
-    external_record_fqdns = values(module.dns.fqdns)
+    external_record_fqdns = [cloudflare_dns_record.validation.name]
   }
 }
 
-module "dns" {
-  source  = "git::https://github.com/Olensys/terraform-cloudflare-dns.git?ref=v1.1.0"
-  context = var.context
+# One domain, no SANs: exactly one validation record, so a static key keeps for_each plannable.
+locals { validation = one(values(module.cert.validation_records)) }
 
+resource "cloudflare_dns_record" "validation" {
   zone_id = var.cloudflare_zone_id
-  records = module.cert.validation_records
+  name    = local.validation.name
+  type    = local.validation.type
+  content = local.validation.content
+  ttl     = 60
 }
 ```
 
-`validation_records` feeds `terraform-cloudflare-dns`, and the created records' names (`fqdns`, a map of record key to record name) go back in as `external_record_fqdns`, so the module waits for issuance and `arn`/`id` only resolve once the certificate is issued. On a first deploy, and whenever the certificate is replaced (domain or SAN change), apply the certificate alone first (`terraform apply -target=module.cert`), then apply everything; the validation record names are known only after the certificate exists.
+The created record's name goes back in as `external_record_fqdns`, so the module waits for issuance and `arn`/`id` only resolve once the certificate is issued. For a certificate with several distinct validation records (SANs on other domains), feed `validation_records` to [terraform-cloudflare-dns](https://github.com/Olensys/terraform-cloudflare-dns) instead and pass its `fqdns` values as `external_record_fqdns`; on a first deploy, and whenever the certificate is replaced (domain or SAN change), apply the certificate alone first (`terraform apply -target=module.cert`), then apply everything, because the record names are known only after the certificate exists.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
