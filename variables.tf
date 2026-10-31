@@ -45,6 +45,16 @@ variable "subject_alternative_names" {
   default     = []
 }
 
+variable "key_algorithm" {
+  description = "Key algorithm of the certificate. It cannot change on an existing certificate, so changing it replaces the certificate."
+  type        = string
+  default     = "EC_prime256v1"
+  validation {
+    condition     = contains(["RSA_2048", "RSA_3072", "RSA_4096", "EC_prime256v1", "EC_secp384r1", "EC_secp521r1"], var.key_algorithm)
+    error_message = "key_algorithm must be one of RSA_2048, RSA_3072, RSA_4096, EC_prime256v1, EC_secp384r1, EC_secp521r1."
+  }
+}
+
 variable "validation" {
   description = "DNS validation settings. method is route53 (the module creates the records in zone_id and, when wait is true, waits for issuance) or external (the module emits validation_records for the consumer to create elsewhere; pass the created records' FQDNs back in external_record_fqdns to make the module wait for issuance). An empty list still turns the wait on; pass null to skip it."
   type = object({
