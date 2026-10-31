@@ -5,7 +5,7 @@ ACM certificate with Route53 or external DNS validation, EC P-256 key, create-be
 ## Opinions
 
 - DNS validation only (`validation_method = "DNS"`); email validation is not exposed.
-- EC P-256 key (`key_algorithm = "EC_prime256v1"`).
+- EC P-256 key by default (`key_algorithm = "EC_prime256v1"`). `key_algorithm` selects another key type (for example `RSA_2048`); it cannot change on an existing certificate, so changing it replaces the certificate.
 - `create_before_destroy` on the certificate (applied by the upstream module), so replacements never leave listeners without a certificate.
 - `validation.method = "route53"` creates the validation records in `validation.zone_id` and, unless `validation.wait = false`, waits for issuance.
 - `validation.method = "external"` creates no records and does not wait; the `validation_records` output is in the record shape of [terraform-cloudflare-dns](https://github.com/Olensys/terraform-cloudflare-dns) so it can be passed straight through. The map is keyed by record name and de-duplicated: an apex and its wildcard share one record, listed once with both domains in its comment. Pass the created records' FQDNs in `validation.external_record_fqdns` to make the module wait for issuance (and `arn`/`id` depend on that wait); without them the certificate validates on its own once the records exist and nothing waits.
@@ -96,6 +96,7 @@ The created record's name goes back in as `external_record_fqdns`, so the module
 | <a name="input_name"></a> [name](#input\_name) | Resource name. Lowercase letters, digits and hyphens. | `string` | n/a | yes |
 | <a name="input_validation"></a> [validation](#input\_validation) | DNS validation settings. method is route53 (the module creates the records in zone\_id and, when wait is true, waits for issuance) or external (the module emits validation\_records for the consumer to create elsewhere; pass the created records' FQDNs back in external\_record\_fqdns to make the module wait for issuance). An empty list still turns the wait on; pass null to skip it. | <pre>object({<br/>    method                = string<br/>    zone_id               = optional(string)<br/>    wait                  = optional(bool, true)<br/>    external_record_fqdns = optional(list(string))<br/>  })</pre> | n/a | yes |
 | <a name="input_create"></a> [create](#input\_create) | Whether to create any resources. Set false to create nothing. | `bool` | `true` | no |
+| <a name="input_key_algorithm"></a> [key\_algorithm](#input\_key\_algorithm) | Key algorithm of the certificate. It cannot change on an existing certificate, so changing it replaces the certificate. | `string` | `"EC_prime256v1"` | no |
 | <a name="input_subject_alternative_names"></a> [subject\_alternative\_names](#input\_subject\_alternative\_names) | Additional domain names the certificate covers. | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags merged onto every taggable resource, applied last. | `map(string)` | `{}` | no |
 

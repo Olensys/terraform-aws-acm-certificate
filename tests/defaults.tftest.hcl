@@ -141,6 +141,29 @@ run "test_create_false_plans_nothing" {
   }
 }
 
+run "test_key_algorithm_accepts_rsa" {
+  command = plan
+
+  variables {
+    key_algorithm = "RSA_2048"
+  }
+
+  assert {
+    condition     = output.name == "example.com"
+    error_message = "an RSA key algorithm must be accepted."
+  }
+}
+
+run "test_key_algorithm_validation" {
+  command = plan
+
+  variables {
+    key_algorithm = "DSA_1024"
+  }
+
+  expect_failures = [var.key_algorithm]
+}
+
 run "test_name_rejects_uppercase" {
   command = plan
 
