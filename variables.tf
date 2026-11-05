@@ -46,12 +46,12 @@ variable "subject_alternative_names" {
 }
 
 variable "key_algorithm" {
-  description = "Key algorithm of the certificate. It cannot change on an existing certificate, so changing it replaces the certificate."
+  description = "Key algorithm of the certificate. It cannot change on an existing certificate, so changing it forces a new certificate."
   type        = string
   default     = "EC_prime256v1"
   validation {
-    condition     = contains(["RSA_2048", "RSA_3072", "RSA_4096", "EC_prime256v1", "EC_secp384r1", "EC_secp521r1"], var.key_algorithm)
-    error_message = "key_algorithm must be one of RSA_2048, RSA_3072, RSA_4096, EC_prime256v1, EC_secp384r1, EC_secp521r1."
+    condition     = contains(["RSA_2048", "EC_prime256v1", "EC_secp384r1"], var.key_algorithm)
+    error_message = "key_algorithm must be one of RSA_2048, EC_prime256v1, EC_secp384r1; ACM accepts the others only on imported certificates."
   }
 }
 

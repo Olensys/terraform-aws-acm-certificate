@@ -164,6 +164,16 @@ run "test_key_algorithm_validation" {
   expect_failures = [var.key_algorithm]
 }
 
+run "test_key_algorithm_rejects_import_only" {
+  command = plan
+
+  variables {
+    key_algorithm = "RSA_4096"
+  }
+
+  expect_failures = [var.key_algorithm]
+}
+
 run "test_name_rejects_uppercase" {
   command = plan
 
