@@ -25,7 +25,7 @@ module "this" {
   subject_alternative_names = var.subject_alternative_names
 
   validation_method = "DNS"
-  key_algorithm     = "EC_prime256v1"
+  key_algorithm     = var.key_algorithm
 
   zone_id                = local.route53 ? var.validation.zone_id : null
   create_route53_records = local.route53_records_created
