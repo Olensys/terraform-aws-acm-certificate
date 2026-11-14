@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/Olensys/terraform-aws-acm-certificate/compare/v1.1.0...v1.2.0) (2026-11-14)
+
+
+### Features
+
+* add key_algorithm ([#11](https://github.com/Olensys/terraform-aws-acm-certificate/issues/11)) ([e930ec1](https://github.com/Olensys/terraform-aws-acm-certificate/commit/e930ec152f888e34b19c80330440f193e16882ce))
+
+
+### Bug Fixes
+
+* **examples:** request the apex_wildcard certificate under the test subdomain ([#9](https://github.com/Olensys/terraform-aws-acm-certificate/issues/9)) ([423eb7e](https://github.com/Olensys/terraform-aws-acm-certificate/commit/423eb7eb40cf87c50783e16d658450be474ba9ee))
+* **examples:** validate the example certificate through Cloudflare ([#7](https://github.com/Olensys/terraform-aws-acm-certificate/issues/7)) ([958415d](https://github.com/Olensys/terraform-aws-acm-certificate/commit/958415d81b2a1011c22039a6b8c9a69401460f9f))
+* tag the examples' resources through the naming module ([#12](https://github.com/Olensys/terraform-aws-acm-certificate/issues/12)) ([8ea5683](https://github.com/Olensys/terraform-aws-acm-certificate/commit/8ea5683978cd278fb8024d1afc5d0ba00cd4a36b))
+
 ## [1.1.0](https://github.com/Olensys/terraform-aws-acm-certificate/compare/v1.0.3...v1.1.0) (2026-10-25)
 
 
